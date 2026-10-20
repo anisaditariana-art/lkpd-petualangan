@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 400" role="img" aria-label="Template Mahkota Merak — ganti dengan gambar sendiri">
+  <rect x="5" y="5" width="430" height="390" rx="18" fill="#fff" stroke="#ddd" stroke-width="2" data-no-color="true"/>
+  <text x="220" y=" thirty" font-size="1" fill="none"> </text>
+  <text x="220" y=" thirty" font-size="1" fill="none"> </text>
+  <text x="220" y="30" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#222" data-no-color="true">Template Mahkota Merak — ganti dengan gambar sendiri</text>
+  
+  <path d="M120 190 L70 90 L160 145 L220 55 L280 145 L370 90 L320 190 Z" fill="#ffffff" stroke="#222" stroke-width="8" stroke-linejoin="round"/>
+  <rect x="120" y="190" width="200" height="55" rx="8" fill="#ffffff" stroke="#222" stroke-width="8"/>
+  <circle cx="220" cy="160" r="24" fill="#ffffff" stroke="#222" stroke-width="7"/>
+  <circle cx="160" cy="177" r="12" fill="#ffffff" stroke="#222" stroke-width="5"/>
+  <circle cx="280" cy="177" r="12" fill="#ffffff" stroke="#222" stroke-width="5"/>
+
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 400" role="img" aria-label="Template Keris 4 — ganti dengan gambar sendiri">
+  <rect x="5" y="5" width="430" height="390" rx="18" fill="#fff" stroke="#ddd" stroke-width="2" data-no-color="true"/>
+  <text x="220" y=" thirty" font-size="1" fill="none"> </text>
+  <text x="220" y=" thirty" font-size="1" fill="none"> </text>
+  <text x="220" y="30" text-anchor="middle" font-size="18" font-family="sans-serif" fill="#222" data-no-color="true">Template Keris 4 — ganti dengan gambar sendiri</text>
+  
+  <path d="M180 55 Q220 35 260 55 L248 105 L235 125 L235 220 L250 265 L190 265 L205 220 L205 125 L192 105 Z" fill="#ffffff" stroke="#222" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M205 125 L235 125 L235 220 L205 220 Z" fill="#ffffff" stroke="#222" stroke-width="6"/>
+  <path d="M192 105 L248 105 L244 125 L196 125 Z" fill="#ffffff" stroke="#222" stroke-width="6"/>
+  <rect x="190" y="265" width="60" height="45" rx="7" fill="#ffffff" stroke="#222" stroke-width="8"/>
+  <path d="M200 310 L240 310 L250 345 L190 345 Z" fill="#ffffff" stroke="#222" stroke-width="8" stroke-linejoin="round"/>
+  <circle cx="220" cy="82" r="12" fill="#ffffff" stroke="#222" stroke-width="5"/>
+
+</svg>

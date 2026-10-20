@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Petualangan 5 Zona — Mewarnai</title>
+<style>
+:root{--ink:#2b2730;--accent:#6c3d91;--paper:#fffdf8;--line:#e8d9ef}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f7f3fb;color:var(--ink)}
+main{max-width:850px;margin:auto;padding:16px}
+header{background:linear-gradient(135deg,#eee3f8,#fff7e8);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px}
+h1{font-size:1.35rem;margin:0 0 6px;color:#5b2c7d}
+p{line-height:1.5}
+.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
+.palette{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.swatch{width:38px;height:38px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 1px #bbb;cursor:pointer}
+.swatch[aria-pressed="true"]{box-shadow:0 0 0 3px #4e2870}
+button,.upload-label{border:0;border-radius:10px;padding:10px 13px;background:#6c3d91;color:white;font-weight:650;cursor:pointer;font-size:.95rem}
+button.secondary{background:#eee5f5;color:#432653}
+#artboard{min-height:250px;display:flex;justify-content:center;align-items:center;background:#fff;border:1px dashed #c9b5d9;border-radius:14px;padding:12px;overflow:hidden}
+#artboard svg{display:block;width:100%;height:auto;max-height:65vh;touch-action:manipulation}
+#artboard svg [data-colorable],#artboard svg path,#artboard svg polygon,#artboard svg rect,#artboard svg circle,#artboard svg ellipse{cursor:pointer}
+#status{font-size:.9rem;color:#62536a}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+input[type=file]{max-width:100%}
+footer{font-size:.82rem;color:#6e6473;padding:6px}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1 id="pageTitle">Petualangan 5 Zona — Mewarnai</h1>
+  <p>Pilih warna, lalu ketuk bidang gambar. Gunakan tombol simpan untuk mengunduh hasilmu.</p>
+</header>
+<section class="panel">
+  <strong>1. Pilih warna</strong>
+  <div class="palette" id="palette" style="margin-top:10px">
+    <button class="swatch" style="background:#e53935" data-color="#e53935" aria-label="Merah" aria-pressed="false"></button>
+    <button class="swatch" style="background:#ff9800" data-color="#ff9800" aria-label="Jingga" aria-pressed="false"></button>
+    <button class="swatch" style="background:#fdd835" data-color="#fdd835" aria-label="Kuning" aria-pressed="false"></button>
+    <button class="swatch" style="background:#43a047" data-color="#43a047" aria-label="Hijau" aria-pressed="false"></button>
+    <button class="swatch" style="background:#1e88e5" data-color="#1e88e5" aria-label="Biru" aria-pressed="false"></button>
+    <button class="swatch" style="background:#8e24aa" data-color="#8e24aa" aria-label="Ungu" aria-pressed="false"></button>
+    <button class="swatch" style="background:#ec407a" data-color="#ec407a" aria-label="Merah muda" aria-pressed="false"></button>
+    <button class="swatch" style="background:#8d6e63" data-color="#8d6e63" aria-label="Cokelat" aria-pressed="false"></button>
+    <button class="swatch" style="background:#222222" data-color="#222222" aria-label="Hitam" aria-pressed="false"></button>
+    <button class="swatch" style="background:#ffffff" data-color="#ffffff" aria-label="Putih" aria-pressed="false"></button>
+  </div>
+  <p id="chosen">Warna terpilih: merah.</p>
+</section>
+<section class="panel">
+  <strong>2. Ketuk bidang gambar untuk mewarnai</strong>
+  <div id="artboard" style="margin-top:10px"><p>Memuat gambar…</p></div>
+  <p id="status" role="status">Jika gambar tidak muncul, periksa nama file SVG pada URL QR code.</p>
+</section>
+<section class="panel">
+  <strong>3. Simpan hasil</strong>
+  <div class="actions" style="margin-top:10px">
+    <button id="saveSvg">Unduh gambar SVG</button>
+    <button id="savePng">Unduh sebagai PNG</button>
+    <button id="reset" class="secondary">Ulangi dari awal</button>
+  </div>
+  <p style="font-size:.9rem">Catatan: hasil warna disimpan saat kamu mengunduh. Jika halaman ditutup sebelum diunduh, warna bisa hilang.</p>
+</section>
+<section class="panel">
+  <strong>Untuk guru</strong>
+  <p>Halaman ini membutuhkan gambar SVG dengan bidang-bidang tertutup (misalnya path atau polygon). Setiap bidang yang ingin diwarnai harus berupa bentuk terpisah. PNG/JPG biasa tidak bisa diwarnai per bidang secara otomatis.</p>
+</section>
+<footer>LKPD Petualangan 5 Zona • Gunakan tombol unduh sebagai bukti penyelesaian.</footer>
+</main>
+<script>
+const params = new URLSearchParams(location.search);
+const imageName = params.get('img') || 'gambar/contoh.svg';
+const label = params.get('judul') || 'Petualangan 5 Zona — Mewarnai';
+document.getElementById('pageTitle').textContent = label;
+document.title = label;
+let selected = '#e53935';
+let originalSvg = '';
+let svgElement = null;
+const board = document.getElementById('artboard');
+const status = document.getElementById('status');
+const chosen = document.getElementById('chosen');
+
+function niceColor(hex){
+ const names={'#e53935':'merah','#ff9800':'jingga','#fdd835':'kuning','#43a047':'hijau','#1e88e5':'biru','#8e24aa':'ungu','#ec407a':'merah muda','#8d6e63':'cokelat','#222222':'hitam','#ffffff':'putih'};
+ return names[hex] || hex;
+}
+document.querySelectorAll('.swatch').forEach(btn=>{
+ btn.addEventListener('click',()=>{
+  selected=btn.dataset.color;
+  document.querySelectorAll('.swatch').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));
+  chosen.textContent='Warna terpilih: '+niceColor(selected)+'.';
+ });
+});
+function makeColorable(svg){
+ // Abaikan bentuk latar belakang dan garis/teks; warnai bentuk yang memiliki bidang tertutup.
+ const shapes=svg.querySelectorAll('path, polygon, rect, circle, ellipse');
+ shapes.forEach(shape=>{
+  if(shape.dataset.noColor === 'true' || shape.closest('[data-no-color="true"]')) return;
+  const fill=shape.getAttribute('fill');
+  if(fill === 'none') return;
+  if(!shape.hasAttribute('data-original-fill')) shape.setAttribute('data-original-fill', fill || '#ffffff');
+  shape.style.cursor='pointer';
+  shape.addEventListener('click',()=>{
+    shape.setAttribute('fill',selected);
+    shape.style.fill=selected;
+    status.textContent='Bidang diwarnai dengan warna '+niceColor(selected)+'.';
+  });
+  shape.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();shape.dispatchEvent(new Event('click'));}
+  });
+  shape.setAttribute('tabindex','0');
+  shape.setAttribute('role','button');
+});
+}
+async function loadSvg(){
+ try{
+  const response=await fetch(imageName);
+  if(!response.ok) throw new Error('File tidak ditemukan');
+  originalSvg=await response.text();
+  const doc=new DOMParser().parseFromString(originalSvg,'image/svg+xml');
+  if(doc.querySelector('parsererror')) throw new Error('Format SVG tidak valid');
+  svgElement=doc.documentElement;
+  if(svgElement.tagName.toLowerCase()!=='svg') throw new Error('File bukan SVG');
+  svgElement.removeAttribute('width');
+  svgElement.removeAttribute('height');
+  if(!svgElement.hasAttribute('viewBox')) svgElement.setAttribute('viewBox','0 0 600 600');
+  svgElement.setAttribute('preserveAspectRatio','xMidYMid meet');
+  makeColorable(svgElement);
+  board.innerHTML='';
+  board.appendChild(document.importNode(svgElement,true));
+  svgElement=board.querySelector('svg');
+  makeColorable(svgElement);
+  status.textContent='Gambar berhasil dimuat: '+imageName+'. Pilih warna lalu ketuk bidang.';
+ }catch(err){
+  board.innerHTML='<div style="text-align:center;padding:16px"><strong>Gambar belum berhasil dimuat.</strong><p>Pastikan file SVG tersedia di folder yang sama dengan halaman ini, atau periksa ejaan URL.</p><p>File yang dicari: <code>'+imageName.replace(/[<>&"]/g,'')+'</code></p></div>';
+  status.textContent='Gagal memuat gambar. Periksa nama file dan lokasi file SVG.';
+ }
+}
+function downloadBlob(blob,filename){
+ const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+document.getElementById('saveSvg').addEventListener('click',()=>{
+ if(!svgElement){alert('Gambar belum dimuat.');return}
+ const clone=svgElement.cloneNode(true);
+ clone.querySelectorAll('[tabindex]').forEach(el=>{el.removeAttribute('tabindex');el.removeAttribute('role');});
+ const xml=new XMLSerializer().serializeToString(clone);
+ downloadBlob(new Blob([xml],{type:'image/svg+xml;charset=utf-8'}),(imageName.split('/').pop()||'hasil').replace('.svg','')+'-berwarna.svg');
+});
+document.getElementById('savePng').addEventListener('click',()=>{
+ if(!svgElement){alert('Gambar belum dimuat.');return}
+ const clone=svgElement.cloneNode(true);
+ clone.setAttribute('width','1200');clone.setAttribute('height','1200');
+ const xml=new XMLSerializer().serializeToString(clone);
+ const blob=new Blob([xml],{type:'image/svg+xml;charset=utf-8'});
+ const url=URL.createObjectURL(blob);const img=new Image();
+ img.onload=()=>{
+  const canvas=document.createElement('canvas');canvas.width=1200;canvas.height=1200;
+  const ctx=canvas.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,1200,1200);ctx.drawImage(img,0,0,1200,1200);
+  canvas.toBlob(png=>{if(png)downloadBlob(png,(imageName.split('/').pop()||'hasil').replace('.svg','')+'-berwarna.png');URL.revokeObjectURL(url);},'image/png');
+ };
+ img.onerror=()=>{URL.revokeObjectURL(url);alert('PNG tidak dapat dibuat. Coba unduh SVG atau gunakan tangkapan layar.');};
+ img.src=url;
+});
+document.getElementById('reset').addEventListener('click',()=>loadSvg());
+loadSvg();
+</script>
+</body>
+</html>
